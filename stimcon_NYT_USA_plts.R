@@ -33,9 +33,9 @@ library(gridExtra)
 # Plot All 4 NYT series: Original PA and LN series & Stimson series (with and without smoothing)
 ###################################################################
 #for original series read in data as LN.agg and PA.agg
-stim_NYT <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/NYT/stim.NYT.csv")
-NYT_pa_agg <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/NYT/NYT_pa_agg.csv")
-NYT_ln_agg <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/NYT/NYT_ln_agg.csv")
+stim_NYT <- read_csv("~/stim.NYT.csv")
+NYT_pa_agg <- read_csv("~/NYT_pa_agg.csv")
+NYT_ln_agg <- read_csv("~/NYT_ln_agg.csv")
 
 ## Plot Series 
 # NYT PA
@@ -112,9 +112,9 @@ ggsave("long_series.pdf")
 # Plot All 4 USAToday series: Original PA and LN series & Stimson series (with and without smoothing)
 ###################################################################
 #for original series read in data as LN.agg and PA.agg
-stim_USA <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/USAToday/stim.USA.csv")
-USA_ln_agg <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/USAToday/USA_ln_agg.csv")
-USA_pa_agg <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/USAToday/USA_pa_agg.csv")
+stim_USA <- read_csv("~/stim.USA.csv")
+USA_ln_agg <- read_csv("~/USA_ln_agg.csv")
+USA_pa_agg <- read_csv("~/USA_pa_agg.csv")
 
 ## Plot Series 
 # USA PA
