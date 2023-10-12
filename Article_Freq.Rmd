@@ -2,7 +2,7 @@
 title: "Article Frequency"
 output: html_document
 subtitle: "Media Stance"
-author: "Suzie and Nitheesha"
+author: "Nitheesha"
 date: "September 8, 2023, September 15th, 2023"
 output:
   html_document:
@@ -51,14 +51,14 @@ library(astsa)
 library(gridExtra)
 
 
-NYT_pa_agg <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/NYT/NYT_pa_agg.csv")
-NYT_ln_agg <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/NYT/NYT_ln_agg.csv")
+NYT_pa_agg <- read_csv("~/NYT_pa_agg.csv")
+NYT_ln_agg <- read_csv("~/NYT_ln_agg.csv")
 
-USA_ln_agg <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/USAToday/USA_ln_agg.csv")
-USA_pa_agg <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/USAToday/USA_pa_agg.csv")
+USA_ln_agg <- read_csv("~/USA_ln_agg.csv")
+USA_pa_agg <- read_csv("~/USA_pa_agg.csv")
 
-NYT_yrly_count <- read_csv("OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/NYT/NYT_yrly_count.csv")
-USA_yrly_count <- read_csv("OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/USAToday/USA_yrly_count.csv")
+NYT_yrly_count <- read_csv("/NYT_yrly_count.csv")
+USA_yrly_count <- read_csv("/USA_yrly_count.csv")
 
 ```
 
