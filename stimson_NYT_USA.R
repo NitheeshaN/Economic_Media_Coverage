@@ -51,9 +51,9 @@ library(gridExtra)
 ###################################################################
 # Stimson function to get single NYT time series
 ###################################################################
-NYT_pa <- read_csv("NewData/full_predictions_nyt_proquest_PA_20230118.csv")
+NYT_pa <- read_csv("full_predictions_nyt_pa.csv")
     #1947-01-01 to 2014-12-28
-NYT_ln <- read_csv("NewData/full_predictions_nyt_lexisnexis_20230110.csv")
+NYT_ln <- read_csv("full_predictions_nyt_ln.csv")
     #1980-06-01 to 2022-11-20
 
 # add a PA and LN variable to each dataframe
@@ -259,9 +259,9 @@ write.csv(stim.PA_LN, "stim.NYT.csv")
 ###################################################################
 # Stimson function to get single USAToday time series
 ###################################################################
-USA_pa <- read_csv("NewData/full_predictions_usatoday_proquest_PA_20230123.csv")
+USA_pa <- read_csv("full_predictions_usa_PA.csv")
   #1987-04-01 to 2014-12-31
-USA_ln <- read_csv("NewData/full_predictions_usatoday_lexisnexis_20230117.csv")
+USA_ln <- read_csv("full_predictions_usa_ln.csv")
   #1989-01-03 to 2022-11-28
 
 # add a PA and LN variable to each dataframe
@@ -432,11 +432,9 @@ write.csv(stim.PA_LN, "stim.USA.csv")
 ###################################################################
 # Merge USA and NYT Stim series w/ Econmedia March 2023 data
 ###################################################################
-#econ <- read_dta("~/OneDrive - The Pennsylvania State University/Summer RA '22/Stimson/NewData/MonthlyEconomicData_Feb2023_2.dta")
-#econ <- read_dta("~/OneDrive - The Pennsylvania State University/Summer RA '22/Stimson/NewData/MonthlyEconomicData_Feb2023v2.dta")
-econ <- read_dta("~/OneDrive - The Pennsylvania State University/Summer RA '22/Stimson/NewData/MonthlyEconomicData_March2023.dta")
-NYT <- read_csv("~/OneDrive - The Pennsylvania State University/Summer RA '22/Stimson/NYT/stim.NYT.csv")
-USA <- read_csv("~/OneDrive - The Pennsylvania State University/Summer RA '22/Stimson/USAToday/stim.USA.csv")
+econ <- read_dta("~MonthlyEconomicData_March2023.dta")
+NYT <- read_csv("~/stim.NYT.csv")
+USA <- read_csv("~/stim.USA.csv")
 
 # create data variable in econ
 econ$Date1 <- as.Date(paste(econ$year, econ$month, 1, sep = "/"))
@@ -458,7 +456,7 @@ NYT<- NYT[, 2:4]
 # merge with econ data
 econ2 <- left_join(econ2, NYT, by = c("Date1" = "Date"))
 
-write.csv(econ2, "MonthlyEconomicData_Mar292023.csv")
+write.csv(econ2, "econ2.csv")
 
 
 
