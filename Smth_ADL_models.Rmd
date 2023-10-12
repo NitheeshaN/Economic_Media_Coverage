@@ -1,7 +1,7 @@
 ---
 title: "Smooth Stimson Series ADL Models"
 subtitle: "Media Stance"
-author: "Suzie and Nitheesha"
+author: "Nitheesha"
 date: "July 24, 2023"
 output:
   html_document:
@@ -49,9 +49,9 @@ library(ggplot2)
 library(stargazer)
 suppressPackageStartupMessages(source("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/PGTSadfv2.r"))
 
-data <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/MonthlyEconomicData_Mar292023.csv")
-NYT <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/NYT/stim.NYT.csv")
-USA <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/USAToday/stim.USA.csv")
+data <- read_csv("~/MonthlyEconomicData_Mar292023.csv")
+NYT <- read_csv("~/stim.NYT.csv")
+USA <- read_csv("~/stim.USA.csv")
 ```
 
 # ADL Models
