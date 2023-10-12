@@ -1,0 +1,152 @@
+---
+title: "Article Frequency"
+output: html_document
+subtitle: "Media Stance"
+author: "Suzie and Nitheesha"
+date: "September 8, 2023, September 15th, 2023"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '3'
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  html_notebook:
+    number_sections: no
+    theme: cerulean
+    toc: yes
+    toc_depth: 3
+  word_document: null
+---
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 14px;
+  }
+td {  /* Table  */
+  font-size: 8px;
+}
+
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(data.table)
+library(readr)
+library(tidyr)
+library(DyadRatios)
+library(lubridate)
+library(tseries)
+library(astsa)
+library(gridExtra)
+
+
+NYT_pa_agg <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/NYT/NYT_pa_agg.csv")
+NYT_ln_agg <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/NYT/NYT_ln_agg.csv")
+
+USA_ln_agg <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/USAToday/USA_ln_agg.csv")
+USA_pa_agg <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/USAToday/USA_pa_agg.csv")
+
+NYT_yrly_count <- read_csv("OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/NYT/NYT_yrly_count.csv")
+USA_yrly_count <- read_csv("OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/USAToday/USA_yrly_count.csv")
+
+```
+
+## NYT: Prep NYT DataFrame
+```{r}
+NYT_pa_agg$Date <- as.Date(paste(NYT_pa_agg$year, NYT_pa_agg$month, 1, sep = "/"))
+NYT_ln_agg$Date <- as.Date(paste(NYT_ln_agg$year, NYT_ln_agg$month, 1, sep = "/"))
+
+NYT_agg <- merge(NYT_ln_agg, NYT_pa_agg, by = "Date", all.y = T, all.x = T)
+NYT_agg <-NYT_agg %>%
+  select(Date, Variable.x, article_freq.x, Variable.y, article_freq.y)
+
+NYT_agg$article_count <- rowSums(cbind(NYT_agg$article_freq.x,NYT_agg$article_freq.y),na.rm=TRUE)
+
+# extract years
+years <- format(as.Date(NYT_agg$Date, format = "%y/%m/%d"), "%Y")
+years <- as.vector(years)
+
+# add to end of df
+NYT_agg$year <- as.numeric(years)
+
+NYT_agg <- NYT_agg %>%
+  group_by(year) %>%
+  mutate(yearly_art_count = sum(article_count))
+
+#add Newspaper ID column to each dataframe
+NYT_agg$newspaper <- "NYT"
+
+#select relevant data
+NYT_yrly_count <- NYT_agg %>%
+  select("year", "yearly_art_count", "newspaper")
+
+NYT_yrly_count <- distinct(NYT_yrly_count)
+write.csv(NYT_yrly_count, "NYT_yrly_count.csv")
+
+```
+
+## USAToday: Prep USA Today dataframe
+
+```{r}
+
+USA_pa_agg$Date <- as.Date(paste(USA_pa_agg$year, USA_pa_agg$month, 1, sep = "/"))
+USA_ln_agg$Date <- as.Date(paste(USA_ln_agg$year, USA_ln_agg$month, 1, sep = "/"))
+
+USA_agg <- merge(USA_ln_agg, USA_pa_agg, by = "Date", all.y = T, all.x = T)
+USA_agg <-USA_agg %>%
+  select(Date, Variable.x, article_freq.x, Variable.y, article_freq.y)
+
+USA_agg$article_count <- rowSums(cbind(USA_agg$article_freq.x,USA_agg$article_freq.y),na.rm=TRUE)
+
+# extract years and months
+years <- format(as.Date(USA_agg$Date, format = "%y/%m/%d"), "%Y")
+years <- as.vector(years)
+
+# add to end of df
+USA_agg$year <- as.numeric(years)
+
+USA_agg <- USA_agg %>%
+  group_by(year) %>%
+  mutate(yearly_art_count = sum(article_count))
+
+#add Newspaper ID column to each dataframe
+USA_agg$newspaper <- "USA"
+
+#select relevant data
+USA_yrly_count <- USA_agg %>%
+  select("year", "yearly_art_count", "newspaper")
+
+USA_yrly_count <- distinct(USA_yrly_count)
+write.csv(USA_yrly_count, "USA_yrly_count.csv")
+
+```
+
+## Barplot
+```{r}
+#bind two dataframes to create one
+ttl_yrly_count <- rbind(NYT_yrly_count, USA_yrly_count)
+```
+
+```{r}
+pdf('ttl_art_freq_yr.pdf')
+
+ggplot(ttl_yrly_count, aes(fill=newspaper, y=yearly_art_count, x=year)) + 
+    geom_bar(position="stack", stat="identity")+
+  labs(title = "Number of Total Newspaper Articlers Per Year", x = "Year", y = "Article Frequency") +
+  theme(legend.title=element_blank()) +
+  scale_fill_discrete(labels = c("New York Times", "USA Today"))
+
+dev.off
+```
+

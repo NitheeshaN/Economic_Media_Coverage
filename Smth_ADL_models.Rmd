@@ -1,0 +1,187 @@
+---
+title: "Smooth Stimson Series ADL Models"
+subtitle: "Media Stance"
+author: "Suzie and Nitheesha"
+date: "July 24, 2023"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '3'
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  html_notebook:
+    number_sections: no
+    theme: cerulean
+    toc: yes
+    toc_depth: 3
+  word_document: null
+---
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 14px;
+  }
+td {  /* Table  */
+  font-size: 8px;
+}
+
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+---
+
+```{r setup, include=FALSE}
+library(forecast) 
+library(astsa) 
+library(dynlm)
+library(lmtest)
+library(readr)
+library(tseries)
+library(tidyr)
+library(ggplot2)
+library(stargazer)
+suppressPackageStartupMessages(source("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/PGTSadfv2.r"))
+
+data <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/MonthlyEconomicData_Mar292023.csv")
+NYT <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/NYT/stim.NYT.csv")
+USA <- read_csv("~/OneDrive - The Pennsylvania State University/MainstreamMediaAnalysis/USAToday/stim.USA.csv")
+```
+
+# ADL Models
+## NYT Full Period
+```{r}
+data.ts <- ts(data, start = c(1959,1), end = c(2022,11), freq = 12)
+
+#NYT_adl <- dynlm(NYT_smth~L(NYT_smth,1:3) +
+#               inflation + L(inflation, 1:3) +
+#               DUNRATE + L(DUNRATE, 1:3) +
+#               real_sp_index_pc + L(real_sp_index_pc, 1:3) +
+#                DSPIC96_pc_pca + L(DSPIC96_pc_pca,1:3) +
+#                LFPR_pca + L(LFPR_pca, 1:3),
+#              data=data.ts)
+#summary(NYT_adl)
+
+NYT_adl <- dynlm(NYT_smth~L(NYT_smth,c(1,12)) +
+               inflation + L(inflation, 1) +
+               DUNRATE + L(DUNRATE, 1) +
+               real_sp_index_pc + L(real_sp_index_pc, 1) +
+                DSPIC96_pc_pca + L(DSPIC96_pc_pca,1) +
+                LFPR_pca + L(LFPR_pca, 1),
+              data=data.ts)
+
+#stick with this latest model: lag 12 deals with seasonality
+summary(NYT_adl)
+```
+
+### BG test for serial correlation
+Reject the null of no serial correlation at lag order 24.
+Fail to reject the null of no serial correlation at lag orders 12 and 6.
+```{r}
+bgtest(NYT_adl, order=24, type="Chisq")  
+bgtest(NYT_adl, order=12, type="Chisq") 
+bgtest(NYT_adl, order=6, type="Chisq") 
+```
+
+### Residual Plot
+```{r}
+nyt_res <- resid(NYT_adl)
+plot(nyt_res,
+     ylab = "Residuals",
+     main = "Residuals for NYT ADL Model")
+```
+
+## NYT Overlap Period
+```{r}
+data.olp.ts <- ts(data[340:780,], start = c(1987,4), end = c(2022,11), freq = 12)
+
+#NYT_olp_sm <- dynlm(NYT_smth~L(NYT_smth,1:3) +  
+#              inflation + L(inflation, 1:3)  +
+#               DUNRATE + L(DUNRATE, 1:3)+
+#               real_sp_index_pc + L(real_sp_index_pc, 1:3)  +
+#                DSPIC96_pc_pca + L(DSPIC96_pc_pca,1:3)  +
+#                LFPR_pca + L(LFPR_pca, 1:3),
+#              data=data.olp.ts)
+
+#summary(NYT_olp_sm)
+
+NYT_olp_sm <- dynlm(NYT_smth~L(NYT_smth,c(1,12)) +  
+               inflation + L(inflation, 1)  +
+               DUNRATE + L(DUNRATE, 1)+
+               real_sp_index_pc + L(real_sp_index_pc, 1)  +
+                DSPIC96_pc_pca + L(DSPIC96_pc_pca,1)  +
+                LFPR_pca + L(LFPR_pca, 1),
+              data=data.olp.ts)
+
+summary(NYT_olp_sm)
+```
+
+### BG test for serial correlation
+Fail to reject the null of no serial correlation at all lag orders. 
+```{r}
+bgtest(NYT_olp_sm, order=24, type="Chisq")  
+bgtest(NYT_olp_sm, order=12, type="Chisq") 
+bgtest(NYT_olp_sm, order=6, type="Chisq") 
+```
+
+### Residual Plot
+```{r}
+nyt_olp_res <- resid(NYT_olp_sm)
+plot(nyt_olp_res,
+     ylab = "Residuals",
+     main = "Residuals for NYT Overlapping Period ADL Model")
+```
+### check residuals
+```{r}
+nyt_olp_res 
+```
+
+## USA Today Full Period
+
+```{r}
+data.us.ts <- ts(data[340:780,], start = c(1987,4), end = c(2022,11), freq = 12)
+
+USA_adl <- dynlm(USA_smth~L(USA_smth,c(1,12)) +
+               inflation + L(inflation, 1) +
+               DUNRATE + L(DUNRATE, 1) +
+               real_sp_index_pc + L(real_sp_index_pc, 1) +
+                DSPIC96_pc_pca + L(DSPIC96_pc_pca,1) +
+                LFPR_pca + L(LFPR_pca, 1),
+              data=data.us.ts)
+summary(USA_adl)
+```
+
+### BG test for serial correlation
+Fail to reject the null of no serial correlation at all lag orders. 
+```{r}
+bgtest(USA_adl, order=24, type="Chisq")  
+bgtest(USA_adl, order=12, type="Chisq") 
+bgtest(USA_adl, order=6, type="Chisq") 
+```
+### Residual Plot
+```{r}
+usa_res <- resid(USA_adl)
+plot(usa_res,
+     ylab = "Residuals",
+     main = "Residuals for USA Today ADL Model")
+```
+```{r}
+acf(usa_res)
+```
+
+```{r}
+pacf(usa_res)
+```
+
+## Final Model
+```{r}
+stargazer(NYT_adl, NYT_olp_sm, USA_adl,
+          title = "ADL Model Output",
+          align = TRUE)
+```
